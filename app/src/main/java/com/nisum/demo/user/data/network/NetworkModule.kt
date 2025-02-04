@@ -23,15 +23,13 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRetrofit(gson: Gson): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
+        return Retrofit.Builder().baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson)).build()
     }
 
     @Provides
     @Singleton
-    fun provideRandomUserApi(retrofit: Retrofit): UserApi {
-        return retrofit.create(UserApi::class.java)
+    fun provideRandomUserApi(retrofit: Retrofit): ApiService {
+        return retrofit.create(ApiService::class.java)
     }
 }

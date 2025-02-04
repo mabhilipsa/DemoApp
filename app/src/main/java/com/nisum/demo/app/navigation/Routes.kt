@@ -1,10 +1,6 @@
 package com.nisum.demo.app.navigation
 
-
-object Routes{
-
-    const val USER_LIST="USERLIST"
-
-    const val USER_DETAIL="USERDETAIL"
-
+sealed class Screen(val route: String) {
+    object UserList : Screen("user_list")
+    object UserDetails : Screen("user_details")
 }

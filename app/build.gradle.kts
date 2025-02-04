@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.retrofit) // Retrofit
     implementation(libs.converterGson) // Gson Converter
     implementation(libs.bundles.coil)
+    implementation(libs.bundles.paging)
 
 
 }

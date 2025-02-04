@@ -1,83 +1,104 @@
 package com.nisum.demo.user.presentation.user_list
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.nisum.demo.user.data.dto.User
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.shape.CircleShape
-import androidx.navigation.NavController
-
+import android.widget.Toast
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.paging.compose.collectAsLazyPagingItems
+import coil3.compose.AsyncImage
 
 @Composable
-fun UserListRoot(navController: NavController, viewModel: UserListViewModel = hiltViewModel()) {
-    var numUsers by remember { mutableStateOf(5) }
+fun UserListScreen(viewModel: UserListViewModel = hiltViewModel(), onUserClick: (User) -> Unit) {
+    var count by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val users = viewModel.users.collectAsLazyPagingItems()
+    val isLoading by viewModel.loading.collectAsState()
 
-    LaunchedEffect(numUsers) {
-        viewModel.getUsers(numUsers)
-    }
-
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Enter number of users:")
-        TextField(
-            value = numUsers.toString(),
-            onValueChange = { newValue -> numUsers = newValue.toIntOrNull() ?: 5 },
-            label = { Text("Number of users") }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Spacer(modifier = Modifier.height(20.dp))
+        OutlinedTextField(value = count,
+            onValueChange = { count = it },
+            label = { Text("Enter number of users") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (viewModel.errorMessage != null) {
-            Text("Error: ${viewModel.errorMessage}", color = Color.Red)
+        Button(
+            onClick = {
+                if (count.isNotEmpty()) {
+                    viewModel.fetchUsers(count.toInt())
+                } else {
+                    Toast.makeText(context, "Enter a number", Toast.LENGTH_SHORT).show()
+                }
+            }, modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Get Users")
         }
 
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(viewModel.usersList) { user ->
-                UserCard(user, navController)
+        if (isLoading) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+        } else {
+            LazyColumn {
+                items(users.itemCount) { index ->
+                    users[index]?.let { user ->
+                        UserCard(user = user, onClick = { onUserClick(user) })
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun UserCard(user: User, navController: NavController) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable {
-                navController.navigate("details/${user.name.first}")
-            }
+fun UserCard(user: User, onClick: (User) -> Unit) {
+    Card(modifier = Modifier
+        .fillMaxWidth()
+        .padding(8.dp)
+        .clickable { onClick(user) }
+
     ) {
-        Row(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            /*Image(
-                painter = rememberImagePainter(user.picture.thumbnail),
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Log.d("ImageURL", "User Image URL: ${user.picture.large}")
+            AsyncImage(
+                model = user.picture.medium,
                 contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape)
-            )*/
+                modifier = Modifier.size(60.dp),
+                contentScale = ContentScale.Crop
+            )
             Spacer(modifier = Modifier.width(16.dp))
             Column {
-                Text("${user.name.first} ${user.name.last}", style = MaterialTheme.typography.bodySmall)
-                Text(user.location.city, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    text = "Name: ${user.name.first} ${user.name.last}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    text = "Address: ${user.location.street.name}, ${user.location.city}",
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
         }
     }
 }
+
+

@@ -2,38 +2,40 @@ package com.nisum.demo.user.presentation.user_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import com.nisum.demo.user.data.dto.User
 import com.nisum.demo.user.data.repository.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import androidx.paging.cachedIn
+import kotlinx.coroutines.flow.collectLatest
 
 @HiltViewModel
 class UserListViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val repository: UserRepository,
 ) : ViewModel() {
+    private val _loading = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading.asStateFlow()
+    private val _users = MutableStateFlow<PagingData<User>>(PagingData.empty())
+    val users: StateFlow<PagingData<User>> = _users.asStateFlow()
 
-    var usersList = mutableListOf<User>()
-    var errorMessage: String? = null
+    fun fetchUsers(count: Int) {
+        _loading.value = true
 
-    fun getUsers(results: Int) {
         viewModelScope.launch {
-            try {
-                val response = userRepository.getUsers(results)
-                withContext(Dispatchers.Main) {
-                    if (response.isSuccessful) {
-                        usersList = response.body()?.results?.toMutableList() ?: mutableListOf()
-                    } else {
-                        errorMessage = "Error: ${response.message()}"
-                    }
+            repository.getUsers(count)
+                .cachedIn(viewModelScope)
+                .collectLatest { pagingData ->
+                    _users.value = pagingData
+                    _loading.value = false
                 }
-            } catch (e: Exception) {
-                errorMessage = "Exception: ${e.localizedMessage}"
-            }
         }
     }
 }
+
 
 

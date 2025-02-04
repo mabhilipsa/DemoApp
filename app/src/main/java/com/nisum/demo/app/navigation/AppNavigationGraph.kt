@@ -1,30 +1,35 @@
 package com.nisum.demo.app.navigation
 
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.nisum.demo.user.presentation.Screen
-import com.nisum.demo.user.presentation.user_detail.DetailsScreen
-import com.nisum.demo.user.presentation.user_list.UserListRoot
-import com.nisum.demo.user.presentation.user_list.UserListViewModel
+import com.google.gson.Gson
+import com.nisum.demo.user.data.dto.User
+import com.nisum.demo.user.presentation.user_list.UserDetailsScreen
+import com.nisum.demo.user.presentation.user_list.UserListScreen
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigationGraph() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Routes.USER_LIST) {
-        composable(route = Routes.USER_LIST) {
-            UserListRoot(navController)
+    NavHost(navController, startDestination = Screen.UserList.route) {
+        composable(Screen.UserList.route) {
+            UserListScreen { user ->
+                val userJson = Gson().toJson(user)
+                var encode = URLEncoder.encode(userJson, StandardCharsets.UTF_8.toString())
+                navController.navigate("${Screen.UserDetails.route}/$encode")
+            }
         }
-        composable("details/{userName}") { backStackEntry ->
-            val viewModel = hiltViewModel<UserListViewModel>()
-            val userName = backStackEntry.arguments?.getString("userName")
-            val user = viewModel.usersList.first { it.name.first == userName }
-            DetailsScreen(user)
+        composable("${Screen.UserDetails.route}/{user}") { backStackEntry ->
+            val userJson = backStackEntry.arguments?.getString("user")
+            val user = Gson().fromJson(userJson, User::class.java)
+            UserDetailsScreen(user)
         }
     }
-
-
 }
+
+
