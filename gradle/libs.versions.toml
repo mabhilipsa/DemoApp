@@ -51,6 +51,7 @@ paging-compose-runtime={ module = "androidx.paging:paging-runtime", version.ref 
 
 
 
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
