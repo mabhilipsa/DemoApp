@@ -67,13 +67,13 @@ class ApiServiceTest {
         mockWebServer.enqueue(mockResponse)
 
         // Call API
-        val response = apiService.getUsers(1, 1)
+        val response = apiService.getUserss(1, 1)
 
         // Assertions
-        assertEquals(1, response.users.size)
-        assertEquals("John", response.users[0].name.first)
-        assertEquals("Doe", response.users[0].name.last)
-        assertEquals("New York", response.users[0].location.city)
+        assertEquals(1, response.results[0].dob)
+        assertEquals("John", response.results[0].name.first)
+        assertEquals("Doe", response.results[0].name.last)
+        assertEquals("New York", response.results[0].location.city)
     }
 
 
@@ -86,10 +86,10 @@ class ApiServiceTest {
 
         mockWebServer.enqueue(mockResponse)
 
-        val response = apiService.getUsers(10, 1)
+        val response = apiService.getUserss(10, 1)
 
         // Assertions
-        assertTrue(response.users.isEmpty())
+        assertTrue(response.results.isEmpty())
     }
 }
 

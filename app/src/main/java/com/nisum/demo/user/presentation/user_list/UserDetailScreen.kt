@@ -1,64 +1,56 @@
-package com.nisum.demo.user.presentation.user_list
-
-import androidx.compose.foundation.background
-import com.nisum.demo.user.data.dto.User
+import android.net.Uri
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import coil3.compose.AsyncImage
+import com.google.gson.Gson
+import com.nisum.demo.user.data.dto.User
 
-@ExperimentalMaterial3Api
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UserDetailsScreen(user: User) {
+fun UserDetailsScreen(navController: NavController, backStackEntry: NavBackStackEntry) {
+    val userJson = backStackEntry.arguments?.getString("user") ?: return
+    val user = Gson().fromJson(Uri.decode(userJson), User::class.java)
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("User Detail") },
-                Modifier.background(MaterialTheme.colorScheme.primary)
+                title = { Text("User Details") },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                }
             )
         }
     ) { paddingValues ->
-        Spacer(modifier = Modifier.height(80.dp))
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .padding(paddingValues)
+                .padding(16.dp)
         ) {
             AsyncImage(
                 model = user.picture.large,
-                contentDescription = "Profile Picture",
+                contentDescription = "Profile com.nisum.demo.user.data.dto.Picture",
                 modifier = Modifier.size(60.dp),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Name: ${user.name.first} ${user.name.last}",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = "Address: ${user.location.street.name}, ${user.location.city}",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = "Country: ${user.location.country}",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(text = "Age: ${user.dob.age}", style = MaterialTheme.typography.bodyLarge)
-            Text(text = "email: ${user.email}", style = MaterialTheme.typography.bodyLarge)
-            Text(text = "phone: ${user.phone}", style = MaterialTheme.typography.bodyLarge)
+            Text("Name: ${user.name.first} ${user.name.last}", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("Email: ${user.email}", fontSize = 16.sp)
+            Text("Phone: ${user.phone}", fontSize = 16.sp)
+            Text("Address: ${user.location.street.name}, ${user.location.city}, ${user.location.country}", fontSize = 16.sp)
         }
     }
 }
-
-
-
 

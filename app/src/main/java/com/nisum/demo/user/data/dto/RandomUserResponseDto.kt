@@ -1,51 +1,57 @@
 package com.nisum.demo.user.data.dto
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class RandomUserResponseDto(
-    @SerializedName("results") val users: List<User>,
-)
-
+    @SerializedName("results") val results: List<User>,
+    @SerializedName("info") val info: Info
+): Parcelable
+@Parcelize
+data class Info(
+    @SerializedName("seed") val seed: String,
+    @SerializedName("results") val results: Int,
+    @SerializedName("page") val page: Int,
+    @SerializedName("version") val version: String
+) :Parcelable
+@Parcelize
 data class User(
-    val name: Name,
-    val location: Location,
-    val email: String,
-    val dob: Dob,
-    val phone: String,
-    val cell: String,
-    val picture: Picture,
-)
-
+    @SerializedName("gender") val gender: String,
+    @SerializedName("name") val name: Name,
+    @SerializedName("location") val location: Location,
+    @SerializedName("email") val email: String,
+    @SerializedName("dob") val dob: Dob,
+    @SerializedName("phone") val phone: String,
+    @SerializedName("cell") val cell: String,
+    @SerializedName("picture") val picture: Picture
+): Parcelable
+@Parcelize
 data class Name(
-    val first: String,
-    val last: String,
-)
-
+    @SerializedName("title") val title: String,
+    @SerializedName("first") val first: String,
+    @SerializedName("last") val last: String
+): Parcelable
+@Parcelize
 data class Location(
-    val street: Street,
-    val city: String,
-    val state: String,
-    val country: String,
-    val postcode: Any,
-)
-
+    @SerializedName("street") val street: Street,
+    @SerializedName("city") val city: String,
+    @SerializedName("state") val state: String,
+    @SerializedName("country") val country: String,
+    @SerializedName("postcode") val postcode: String
+): Parcelable
+@Parcelize
 data class Street(
-    val number: Int,
-    val name: String,
-)
-
+    @SerializedName("number") val number: Int,
+    @SerializedName("name") val name: String
+): Parcelable
+@Parcelize
 data class Dob(
-    val date: String,
-    val age: Int,
-)
-
+    @SerializedName("date") val date: String,
+    @SerializedName("age") val age: Int
+): Parcelable
+@Parcelize
 data class Picture(
-    val large: String,
-    val medium: String,
-    val thumbnail: String,
-)
-
-
-
-
-
+    @SerializedName("large") val large: String
+): Parcelable

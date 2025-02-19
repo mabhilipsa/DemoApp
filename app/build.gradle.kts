@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt.android)
     kotlin("kapt")
+    id("kotlin-parcelize")
 }
 
 android {
@@ -61,6 +62,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.adapters)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -88,6 +92,21 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     testImplementation("androidx.paging:paging-common-ktx:3.2.1")
     testImplementation("com.google.truth:truth:1.1.3")
+    // Room
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    // Room
+    implementation("androidx.room:room-runtime:2.6.1") // Or latest
+    kapt("androidx.room:room-compiler:2.6.1") // Or latest
+    implementation("androidx.room:room-ktx:2.6.1") // Or latest (Optional, for Kotlin coroutines support)
 
+    // Room Paging Integration
+    implementation("androidx.room:room-paging:2.6.1") // Or latest - THIS IS THE KEY ADDITION
 
+    // Paging 3
+    implementation("androidx.paging:paging-runtime-ktx:3.2.1") // Or latest
+    implementation("androidx.paging:paging-compose:3.2.1") // Or latest
 }
+
+

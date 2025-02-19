@@ -1,19 +1,15 @@
 package com.nisum.demo.user.data.repository
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import com.nisum.demo.user.data.dto.User
 import com.nisum.demo.user.data.network.ApiService
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+import javax.inject.Singleton
 
-class UserRepository @Inject constructor(
-    private val apiService: ApiService,
-) {
-    fun getUsers(count: Int): Flow<PagingData<User>> {
-        return Pager(config = PagingConfig(pageSize = 10, enablePlaceholders = false),
-            pagingSourceFactory = { UserPagingSource(apiService, count) }).flow
+@Singleton
+class UserRepository @Inject constructor(private val api: ApiService) {
+    suspend fun fetchUsers(count: Int): List<User> {
+        return api.getUsers(count).results
     }
 }
+
 

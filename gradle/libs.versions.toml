@@ -17,6 +17,9 @@ composeCharts = "0.0.18"
 retrofit="2.9.0"
 coil3 = "3.0.0"
 paging="3.2.1"
+roomCommon = "2.6.1"
+roomKtx = "2.6.1"
+adapters = "3.2.0-alpha11"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -48,6 +51,9 @@ coil-network-okhttp={ module = "io.coil-kt.coil3:coil-network-okhttp", version.r
 
 paging-compose={ module = "androidx.paging:paging-compose", version.ref = "paging" }
 paging-compose-runtime={ module = "androidx.paging:paging-runtime", version.ref = "paging" }
+androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+androidx-adapters = { group = "androidx.databinding", name = "adapters", version.ref = "adapters" }
 
 
 
